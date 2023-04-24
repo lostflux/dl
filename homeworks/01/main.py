@@ -99,17 +99,17 @@ def load_data(split, dataset_name, datadir, nchannels):
 # You have to write the parameters according to instructions, define the network and train it
 def main():
 
-    #Settings
-    #Define the parameters to train your model
+    # Settings
+    # Define the parameters to train your model
     #***********Check the instructions and make sure you set your parameters accordingly*********
-    datadir='datasets'
-    dataset="CIFAR10"
-    nunits=
-    lr=
-    mt=
-    batchsize=
-    epochs=
-    stopcond=
+    datadir     = "datasets"
+    dataset     = "CIFAR10"     # dataset (other options: MNIST, CIFAR10, CIFAR100)
+    nunits      = 1024          # hidden units
+    lr          = 0.001         # learning rate
+    mt          = 0.9           # momentum
+    batchsize   = 64            # batch size
+    epochs      = 25            # number of training epochs
+    stopcond    = 0.01          # stop early if validation error goes below this threshold
 
     #*************Your code ends here*************************
 
@@ -123,7 +123,24 @@ def main():
 
     # create an initial model
     #*****************Define your 2-layer model here*****************
-    model = 
+    # model = nn.Sequential()
+    # model.append(nn.Linear(32*32*3, 1024))
+    # model.append(nn.ReLU())
+    # model.append(nn.Linear(1024, 10))
+
+    # define model (32 x 32 x 3) -> (1024) -> (10)
+    model = nn.Sequential(
+        nn.Linear(32*32*3, 1024),
+        nn.ReLU(),
+        nn.Linear(1024, 10)
+    )
+
+    # define loss function (criterion) and optimizer
+    criterion = nn.CrossEntropyLoss().to(device)
+    optimizer = optim.SGD(model.parameters(), lr, momentum=mt)
+
+    # add optimizer to model
+    model.append(optimizer)
 
     #*************Your code ends here********************************
 
