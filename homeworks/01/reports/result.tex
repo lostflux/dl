@@ -42,44 +42,76 @@
 
 \newpage
 \begin{problem}[1]
-  Model results and discussion.
+  Report on the results of the models.
+
+  As we can see in table~\ref{tab:params}, the first neural network,
+  having $1024$ hidden units, learns about $4$ times more parameters
+  than the second one which has $256$ hidden units.
+  This is expected since the number of hidden units in the first neural
+  network is exactly four times as many as the number of hidden units in the second.
 
   \step
-  For even $n$, the next player $\N$ can win as follows:
-  \begin{enumroman}
-    \item Let the squares be numbered $1, 2, \ldots, n$ from left to right.
-    \item $\N$ marks the two contiguous squares $n/2, n/2 + 1$.
-    \item This leaves two identical positions, each of dimensions
-      $1 \times \parens{\frac{n}{2} - 1}$.
-      Since $\P$ moves first in this new situation, $\N$ can win by strategy-stealing.
-  \end{enumroman}
-  
-  \step
-  For odd $n$, the best strategy for the next player is to leave a position with an odd
-  dimension for the other player, since leaving a position with even dimensions
-  loses by the strategy above.
-  The outcome therefore depends on how many such moves can be made before running out
-  --- that is,
-  \[ \mathbf{outcome}(G) = \begin{cases}
-      \N & \text{if \quad $n \pmod 2 \equiv 1$} \\
-      \P & \text{if \quad $n \pmod 2 \equiv 0$}
-  \end{cases} \]
-  Particularly, $(1 \times 7) \in \N$ and $(1 \times 9) \in \P$.
+  However, let's look at how that affects the 
 
   \step
-  Therefore, the values of the games are:
-  \begin{table}[h]
-    \centering
-    \begin{tabular}{|l|r|r|}
-      Dimensions & Class & Value \\
-      \bottomrule
-      $(1 \times 7)$ & $\N$ & $1$ \\
-      $(1 \times 8)$ & $\N$ & $1$ \\
-      $(1 \times 9)$ & $\P$ & $0$ \\
-      $(1 \times 10)$ & $\N$ & $1$ \\
-      \toprule
-    \end{tabular}
-    \caption{Values of $1 \times n$ \cram for $n = 7, 8, 9, 10$}
-  \end{table}
+    \begin{table}[h]
+      \begin{minipage}{.4\textwidth}
+        \centering
+        \begin{tabular}{| l | r | r |}
+          \bottomrule
+          Final Result                & Model 1     & Model 2 \\   
+          \midrule
+          Training Loss               & $1.945$     & $1.959$ \\
+          Training Margin             & $-0.983$    & $-0.987$ \\
+          Training Error              & $0.468$     & $0.484$	 \\
+          Validation Error            & $0.505$     & $0.515$ \\
+          \toprule
+        \end{tabular}
+        \caption{Results.}~\label{tab:results}
+      \end{minipage}%
+      \begin{minipage}{.6\textwidth}
+        \centering
+        \begin{tabular}{| l | r | r |}
+          \bottomrule
+          Metric / Hyperparameter   & Model 1     & Model 2 \\
+          \midrule
+          Learning Rate             & \multicolumn{2}{c|}{$0.001$}                                    \\ 
+          Momentum                  & \multicolumn{2}{c|}{$0.9$}                                      \\ 
+          Batch Size                & \multicolumn{2}{c|}{$64$}                                       \\ 
+          Epochs                    & \multicolumn{2}{c|}{$25$}                                       \\ 
+          Stop Condition            & \multicolumn{2}{c|}{$0.01$}                                     \\
+          Dataset                   & \multicolumn{2}{c|}{CIFAR10}                                    \\
+          Channels                  & \multicolumn{2}{c|}{$3$}                                        \\
+          Classes                   & \multicolumn{2}{c|}{$10$}                                       \\
+          \midrule
+          \textbf{Hidden Units}     & $\mathbf{1024}$                     & $\mathbf{256}$                      \\
+          \midrule
+          Frobenius$_1$             & $19.0$                              & $10.1$                              \\
+          Frobenius$_2$             & $4.53$                              & $4.36$                              \\
+          Distance$_1$              & $4.02$                              & $4.04$                              \\
+          Distance$_2$              & $3.15$                              & $2.88$                              \\
+          Spectral$_1$              & $1.5$                               & $1.5$                               \\
+          Spectral$_2$              & $1.93$                              & $1.84$                              \\
+          Fro$^2$                   & $86.0$                              & $44.0$                              \\
+          $L1_{max}^2$ 	            & $1300$                              & $725$                               \\
+          Spec Dist 	              & $15.0$                              & $13.6$                              \\
+          Dist Spec 	              & $248$                               & $119$                               \\
+          Spec Dist sum 	          & $263$                               & $133$                               \\
+          Spec L1max 	              & $14.8$                              & $13.4$                              \\
+          L1max Spec 	              & $240$                               & $115$                               \\
+          Spec L1max sum 	          & $255$                               & $129$                               \\
+          Dist Fro 	                & $18.2$                              & $17.6$                              \\
+          \textbf{Parameters Learned} & $\mathbf{3.16 \times 10^{6}}$     & $\mathbf{7.89 \times 10^{5}}$                \\
+          VC bound 	                & $9.19 \times 10^{9}$                & $2.03 \times 10^{9}$                \\
+          L1max bound 	            & $3.93 \times 10^{10}$               & $1.21 \times 10^{9}$                \\
+          \midrule
+          \textbf{Computed Bound}   & $\mathbf{1.88 \times 10^{10}}$      & $\mathbf{4.88 \times 10^{9}}$       \\
+          \toprule
+        \end{tabular}
+        \caption{Result comparisons for the neural network models.}~\label{tab:params}
+      \end{minipage}%
+    \end{table}
+
+
 \end{problem}
 \end{document}
