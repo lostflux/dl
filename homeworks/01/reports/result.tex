@@ -1,0 +1,85 @@
+\documentclass[11pt, reqno]{amsart}
+
+\input{~/latex-common/macros.tex}
+\usepackage[backend=bibtex,style=science]{biblatex}
+% \bibliography{main.bib}
+\pgfplotsset{compat=1.18}
+
+\pagestyle{fancy}                         % fancy (allow headers, footers)
+\fancyhf{}                                % clear all header/footer settings.
+\cfoot{\thepage}                          % set page-numbers in footer.
+% \lhead{\textit{\textbf{ Amittai, S}}}   % set name in header, left.
+% \rhead{\textsc{Math 71: Algebra}}       % set class name in header, right.
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\begin{document}
+
+\newdate{due-date}{27}{04}{2023}
+
+\title{CS-89.31: Deep Learning Generalization and Robustness\\ Amittai Siavava \\ \displaydate{due-date}}
+\author{Amittai Siavava}
+% \date{\today}
+
+
+\setlength{\headheight}{13.0pt}
+\setlength{\footskip}{15.0pt}
+
+\maketitle
+
+\bigskip
+
+\def \cram { \textsc{cram} }
+\def \dom { \textsc{domineering} }
+\def \sub { \textsc{subtraction} }
+\def \weighted { \textsc{weighted odds and evens}}
+\def \nim { \textsc{nim} }
+\def \P { \mathbf{P}}
+\def \N { \mathbf{N}}
+
+\newpage
+\begin{problem}[1]
+  Model results and discussion.
+
+  \step
+  For even $n$, the next player $\N$ can win as follows:
+  \begin{enumroman}
+    \item Let the squares be numbered $1, 2, \ldots, n$ from left to right.
+    \item $\N$ marks the two contiguous squares $n/2, n/2 + 1$.
+    \item This leaves two identical positions, each of dimensions
+      $1 \times \parens{\frac{n}{2} - 1}$.
+      Since $\P$ moves first in this new situation, $\N$ can win by strategy-stealing.
+  \end{enumroman}
+  
+  \step
+  For odd $n$, the best strategy for the next player is to leave a position with an odd
+  dimension for the other player, since leaving a position with even dimensions
+  loses by the strategy above.
+  The outcome therefore depends on how many such moves can be made before running out
+  --- that is,
+  \[ \mathbf{outcome}(G) = \begin{cases}
+      \N & \text{if \quad $n \pmod 2 \equiv 1$} \\
+      \P & \text{if \quad $n \pmod 2 \equiv 0$}
+  \end{cases} \]
+  Particularly, $(1 \times 7) \in \N$ and $(1 \times 9) \in \P$.
+
+  \step
+  Therefore, the values of the games are:
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{|l|r|r|}
+      Dimensions & Class & Value \\
+      \bottomrule
+      $(1 \times 7)$ & $\N$ & $1$ \\
+      $(1 \times 8)$ & $\N$ & $1$ \\
+      $(1 \times 9)$ & $\P$ & $0$ \\
+      $(1 \times 10)$ & $\N$ & $1$ \\
+      \toprule
+    \end{tabular}
+    \caption{Values of $1 \times n$ \cram for $n = 7, 8, 9, 10$}
+  \end{table}
+\end{problem}
+\end{document}

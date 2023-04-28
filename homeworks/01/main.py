@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import torch
 from torch import nn, optim
@@ -7,8 +10,10 @@ import bound
 import argparse
 from torchvision import transforms, datasets
 
+MODEL = 2
+
 # train the model for one epoch on the given dataset
-def train(model, device, train_loader, criterion, optimizer, epoch):
+def train(model: nn.Sequential, device, train_loader, criterion, optimizer, epoch):
     sum_loss, sum_correct = 0, 0
 
     # switch to train mode
@@ -58,12 +63,12 @@ def validate(model, device, val_loader, criterion):
                 output_m[i, target[i]] = output_m[i,:].min()
 
             #****************You will compute the margin below of your network*****************    
-            margin = 
+            margin = torch.cat((margin, output[:, target].diag() - output_m[:, output_m.max(1)[1]].diag()), dim=0)
 
             #*************Your code ends here*************************
 
         #****************Return 5th percentile below********************
-        percentile_margin = 
+        percentile_margin = margin.kthvalue(int(0.05 * margin.size(0)))[0].item()
 
         #*************Your code ends here*************************
     return 1 - (sum_correct / len(val_loader.dataset)), sum_loss / len(val_loader.dataset), percentile_margin
@@ -77,9 +82,22 @@ def load_data(split, dataset_name, datadir, nchannels):
     ##Normalize dataset
     ##mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
     ##*************Write the code below to Normalize and do data augmentation*******************
-    normalize = 
-    tr_transform = 
-    val_transform = 
+    normalize = transforms.Normalize(
+        mean=[0.485, 0.456, 0.406], 
+        std=[0.229, 0.224, 0.225]
+    )
+    
+    tr_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.RandomCrop(32),
+        transforms.RandomHorizontalFlip(0.5),
+        normalize
+    ])
+
+    val_transform = transforms.Compose([
+        transforms.ToTensor(),
+        normalize
+    ])
 
     #*************Your code ends here*************************
 
@@ -110,6 +128,14 @@ def main():
     batchsize   = 64            # batch size
     epochs      = 25            # number of training epochs
     stopcond    = 0.01          # stop early if validation error goes below this threshold
+    W, H        = 32, 32        # image width and height
+    savefile     = "model-1.pt"    # file to save the model
+
+
+
+    if MODEL == 2:
+        nunits      = 256           # hidden units
+        savefile     = "model-2.pt"    # file to save the model
 
     #*************Your code ends here*************************
 
@@ -123,24 +149,22 @@ def main():
 
     # create an initial model
     #*****************Define your 2-layer model here*****************
-    # model = nn.Sequential()
-    # model.append(nn.Linear(32*32*3, 1024))
-    # model.append(nn.ReLU())
-    # model.append(nn.Linear(1024, 10))
 
     # define model (32 x 32 x 3) -> (1024) -> (10)
     model = nn.Sequential(
-        nn.Linear(32*32*3, 1024),
+        nn.Linear(W * H * nchannels, nunits),
         nn.ReLU(),
-        nn.Linear(1024, 10)
+        nn.Linear(nunits, nclasses),
+        nn.Softmax(dim=1),
     )
 
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().to(device)
     optimizer = optim.SGD(model.parameters(), lr, momentum=mt)
 
-    # add optimizer to model
-    model.append(optimizer)
+    # train
+    # for epoch in range(epochs):
+
 
     #*************Your code ends here********************************
 
@@ -161,12 +185,13 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=batchsize, shuffle=False, **kwargs)
 
     # training the model
+    val_err, val_loss, val_margin = None, None, None
     for epoch in range(0, epochs):
         # *************You have to complete the code below for training your model****************
 
-        tr_err, tr_loss = 
+        tr_err, tr_loss = train(model, device, train_loader, criterion, optimizer, epoch)
         #Validation run
-        val_err, val_loss, val_margin = 
+        val_err, val_loss, val_margin = validate(model, device, val_loader, criterion)
 
        #*************Your code ends here********************************
 
@@ -177,11 +202,12 @@ def main():
         if tr_loss < stopcond: 
             break
     # calculate the training error and margin (on Training set) of the learned model
-    tr_err, tr_loss, tr_margin = validate( model, device, train_loader, criterion)
+    tr_err, tr_loss, tr_margin = validate( model, device, train_loader, criterion )
     print(f'\nFinal: Training loss: {tr_loss:.3f}\t Training margin {tr_margin:.3f}\t ',
             f'Training error: {tr_err:.3f}\t Validation error: {val_err:.3f}\n')
     # Print the measures and bounds computed in bound.py
     measure = bound.calculate(model, init_model, device, train_loader, tr_margin)
+    torch.save(model.state_dict(), savefile)
     for key, value in measure.items():
         print(f'{key:s}:\t {float(value):3.3}')
     

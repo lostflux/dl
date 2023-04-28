@@ -1,5 +1,6 @@
 import torch
 import math
+from torch import nn
 
 # This module calculates different measures on your trained model and returns a dictionary whose keys are the measure names
 def calculate(model, init_model, device, train_loader, margin):
@@ -25,21 +26,21 @@ def calculate(model, init_model, device, train_loader, margin):
         _,S01,_ = init_modules[0].weight.svd()
         # Eigenvalues of the initial weight matrix in the second layer
         _,S02,_ = init_modules[2].weight.svd()
-        #Frobenius norm of the weight matrix in the first layer
+        # Frobenius norm of the weight matrix in the first layer
         #************You will compute Fr1 below*******************
-        Fr1 = 
+        Fr1 = modules[0].weight.norm()
 
         #*************Your code ends here*************************
         # Frobenius norm of the weight matrix in the second layer
         Fr2 = modules[2].weight.norm()
         # difference of final weights to the initial weights in the first layer
         #*************You will compute diff1 below***************** 
-        diff1= 
+        diff1 = modules[0].weight - init_modules[0].weight
 
         #***************Your code ends here************************
         #Euclidean distance of the weight matrix in the first layer to the initial weight matrix
         #**************You will compute Dist1 below using your diff1***************
-        Dist1 = 
+        Dist1 = diff1.norm()
 
         #***************Your code ends here*************************
         # difference of final weights to the initial weights in the second layer
@@ -71,7 +72,7 @@ def calculate(model, init_model, device, train_loader, margin):
         measure['L1max_Spec'] = S2[0] * L1Dist1
         measure['Spec_L1max_sum'] = measure['Spec_L1max'] + measure['L1max_Spec']
         #****************You will compute the Frobenius Distance using the provided instruction************
-        measure['Dist_Fro'] = 
+        measure['Dist_Fro'] = Dist1 * Fr2
         
         #******************Your code ends here***********************
         # delta is the probability that the generalization bound does not hold
@@ -116,7 +117,7 @@ def calculate(model, init_model, device, train_loader, margin):
 
         # Here is the below part you will complete 
         #********************Compute the Generalization bound as provided in the instruction***************
-        measure['Your computed bound'] = 
+        measure['Your computed bound'] = ( (8 * math.sqrt(C) * Fr1 * Fr2 * (math.sqrt(data_L2) / margin)) + (3 * math.sqrt(math.log(m / delta)))) ** 2
         
         #*********************Your code ends here*********************
         

@@ -1,0 +1,49 @@
+Files already downloaded and verified
+Files already downloaded and verified
+Epoch: 1/25	 Training loss: 2.212	 Validation margin -0.854	  Training error: 0.740	 Validation error: 0.686
+Epoch: 2/25	 Training loss: 2.136	 Validation margin -0.920	  Training error: 0.661	 Validation error: 0.639
+Epoch: 3/25	 Training loss: 2.106	 Validation margin -0.945	  Training error: 0.636	 Validation error: 0.624
+Epoch: 4/25	 Training loss: 2.087	 Validation margin -0.949	  Training error: 0.617	 Validation error: 0.606
+Epoch: 5/25	 Training loss: 2.072	 Validation margin -0.956	  Training error: 0.600	 Validation error: 0.591
+Epoch: 6/25	 Training loss: 2.060	 Validation margin -0.967	  Training error: 0.590	 Validation error: 0.585
+Epoch: 7/25	 Training loss: 2.050	 Validation margin -0.963	  Training error: 0.581	 Validation error: 0.574
+Epoch: 8/25	 Training loss: 2.041	 Validation margin -0.971	  Training error: 0.570	 Validation error: 0.570
+Epoch: 9/25	 Training loss: 2.033	 Validation margin -0.974	  Training error: 0.563	 Validation error: 0.566
+Epoch: 10/25	 Training loss: 2.026	 Validation margin -0.975	  Training error: 0.556	 Validation error: 0.563
+Epoch: 11/25	 Training loss: 2.020	 Validation margin -0.977	  Training error: 0.549	 Validation error: 0.555
+Epoch: 12/25	 Training loss: 2.015	 Validation margin -0.978	  Training error: 0.544	 Validation error: 0.551
+Epoch: 13/25	 Training loss: 2.009	 Validation margin -0.981	  Training error: 0.539	 Validation error: 0.547
+Epoch: 14/25	 Training loss: 2.004	 Validation margin -0.982	  Training error: 0.533	 Validation error: 0.543
+Epoch: 15/25	 Training loss: 1.999	 Validation margin -0.984	  Training error: 0.529	 Validation error: 0.543
+Epoch: 16/25	 Training loss: 1.995	 Validation margin -0.984	  Training error: 0.524	 Validation error: 0.539
+Epoch: 17/25	 Training loss: 1.991	 Validation margin -0.984	  Training error: 0.521	 Validation error: 0.535
+Epoch: 18/25	 Training loss: 1.987	 Validation margin -0.986	  Training error: 0.517	 Validation error: 0.535
+Epoch: 19/25	 Training loss: 1.983	 Validation margin -0.985	  Training error: 0.512	 Validation error: 0.530
+Epoch: 20/25	 Training loss: 1.979	 Validation margin -0.987	  Training error: 0.508	 Validation error: 0.528
+Epoch: 21/25	 Training loss: 1.977	 Validation margin -0.987	  Training error: 0.505	 Validation error: 0.524
+Epoch: 22/25	 Training loss: 1.973	 Validation margin -0.988	  Training error: 0.501	 Validation error: 0.522
+Epoch: 23/25	 Training loss: 1.970	 Validation margin -0.988	  Training error: 0.498	 Validation error: 0.523
+Epoch: 24/25	 Training loss: 1.966	 Validation margin -0.988	  Training error: 0.495	 Validation error: 0.518
+Epoch: 25/25	 Training loss: 1.963	 Validation margin -0.988	  Training error: 0.491	 Validation error: 0.515
+
+Final: Training loss: 1.959	 Training margin -0.987	  Training error: 0.484	 Validation error: 0.515
+
+Frobenius1:	 10.1
+Frobenius2:	 4.36
+Distance1:	 4.04
+Distance2:	 2.88
+Spectral1:	 1.5
+Spectral2:	 1.84
+Fro_Fro:	 44.0
+L1max_L1max:	 7.25e+02
+Spec_Dist:	 13.6
+Dist_Spec:	 1.19e+02
+Spec_Dist_sum:	 1.33e+02
+Spec_L1max:	 13.4
+L1max_Spec:	 1.15e+02
+Spec_L1max_sum:	 1.29e+02
+Dist_Fro:	 17.6
+#parameter:	 7.89e+05
+VC bound:	 2.03e+09
+L1max bound:	 1.21e+10
+Your computed bound:	 4.88e+09

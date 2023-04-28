@@ -1,0 +1,156 @@
+\documentclass[11pt, reqno]{amsart}
+
+\input{~/latex-common/macros.tex}
+\usepackage[backend=bibtex,style=science]{biblatex}
+% \usepackage{tikzfill}
+% \usetikzlibrary{fill}
+% \bibliography{main.bib}
+\pgfplotsset{compat=1.18}
+
+\pagestyle{fancy}                         % fancy (allow headers, footers)
+\fancyhf{}                                % clear all header/footer settings.
+\cfoot{\thepage}                          % set page-numbers in footer.
+% \lhead{\textit{\textbf{ Amittai, S}}}   % set name in header, left.
+% \rhead{\textsc{Math 71: Algebra}}       % set class name in header, right.
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+
+\renewcommand{\theenumi}{\alph{enumi}}
+
+\begin{document}
+
+\newdate{due-date}{27}{04}{2023}
+
+\title{CS-89.31: Deep Learning Generalization and Robustness\\ Amittai Siavava \\ \displaydate{due-date}}
+\author{Amittai Siavava}
+% \date{\today}
+
+
+\setlength{\headheight}{13.0pt}
+\setlength{\footskip}{15.0pt}
+
+\maketitle
+
+\bigskip
+
+\def \cram { \textsc{cram} }
+\def \dom { \textsc{domineering} }
+\def \sub { \textsc{subtraction} }
+\def \weighted { \textsc{weighted odds and evens}}
+\def \nim { \textsc{nim} }
+\def \P { \mathbf{P}}
+\def \N { \mathbf{N}}
+
+\newpage
+\begin{problem}[1]
+  Let us denote with:
+  \begin{itemize}
+    \item $N \times N\times V$ the size of the input volume;
+    \item $n \times n \times V$ the size of the filters;
+    \item $Z$ the number of zeros padded at the top/bottom/left/right of the image;
+    \item $S$ the stride;
+    \item $V'$ the number of filters.
+  \end{itemize}
+  Prove the output volume will have size $M \times M \times V'$,
+  where $M = \frac{N - n+2Z}{S} + 1$.
+
+  \step
+  \emph{
+    [Hint] Drawing the convolution operation with $Z$ and $S$ on it
+    can help you get some intuition of proving the formula.
+  }
+
+  \step
+  \begin{enumarabic}
+    \item Since we pad the input volume with $Z$ zeros on each side,
+      the resulting volume (before convolution) is $N + 2Z$.
+      The resulting volume retains the same depth $V$.
+    \item Next, we apply filters of size $n \times n \times V$.
+      Since filters cannot be partially applied(i.e. part of the filter being in the
+      image and part of it being outside), we can only apply the filter
+      from position $0$ to position $(N + 2Z) - n$ (when the right edge of the filter
+      will be at position $N + 2Z$).
+    \item A stride $S$ subdivides this interval into $\frac{(N + 2Z) - n}{S}$ intervals.
+      However, since both the starting position and the ending position are
+      applied to, we get an extra position for the filter, making
+      the number of intervals $\frac{(N + 2Z) - n}{S} + 1$.
+    \item Therefore, each applied filter will produce a volume of size
+      $M \times M$, where $M = \frac{(N + 2Z) - n}{S} + 1$.
+      Since we have $V'$ filters, the resulting volume will be of size
+      $M \times M \times V'$.
+
+      \step
+      \emph{See next page for drawing.}
+  \end{enumarabic}
+
+  \newpage
+  For simplicity, I fixed the volume to $9 \times 9 \times 1$, and
+  also fixed the filter to $3 \times 3 \times 1$.
+  In direct contrast to the formula above, $(N + 2Z) = 9$ and $n = 3$.
+
+      \noindent
+      \begin{figure}[h]
+        \begin{minipage}{.3\textwidth}
+          \centering
+          \begin{tikzpicture}[scale=0.3]
+            % draw a 9X9 grid
+            \draw[step=1cm,gray,very thin] (0, 0) grid (9, 9);
+          \end{tikzpicture}
+          \caption{\\Input-volume $(9~\times~9)$}
+        \end{minipage}%
+        \begin{minipage}{.5\textwidth}
+          \centering
+          \begin{tikzpicture}[scale=0.3]
+            \fill[electriclime] (0,0) rectangle (3, 3);
+            \draw[step=1cm,black,very thin] (0,0) grid (3,3);
+          \end{tikzpicture}
+          \caption{Filter}
+        \end{minipage}
+
+        \step
+        \begin{minipage}{.3\textwidth}
+          \centering
+          \begin{tikzpicture}[scale=0.3]
+            % draw filter at position 0
+            \fill[electriclime] (0, 9) rectangle (3, 6);
+            \fill[glaucous] (1, 8) rectangle (4, 5);
+            \fill[electriclime] (2, 7) rectangle (5, 4);
+            \fill[glaucous] (3, 6) rectangle (6, 3);
+            \fill[electriclime] (4, 5) rectangle (7, 2);
+            \fill[glaucous] (5, 4) rectangle (8, 1);
+            \fill[electriclime] (6, 3) rectangle (9, 0);
+            % draw a 9X9 grid
+            \draw[step=1cm,black,very thin] (0,0) grid (9,9);
+          \end{tikzpicture}
+          \caption{\\Stride~=~$1$\\ $M = 7 = \frac{9 - 3}{1} + 1$}
+        \end{minipage}%
+        \begin{minipage}{.3\textwidth}
+          \centering
+          \begin{tikzpicture}[scale=0.3]
+            % draw filter at position 0
+            \fill[electriclime] (0,9) rectangle (3, 6);
+            \fill[glaucous] (2, 7) rectangle (5, 4);
+            \fill[electriclime] (4, 5) rectangle (7, 2);
+            \fill[glaucous] (6, 3) rectangle (9, 0);
+            % draw a 9X9 grid
+            \draw[step=1cm,black,very thin] (0,0) grid (9,9);
+          \end{tikzpicture}
+          \caption{\\Stride~=~$2$\\ $M = 4 = \frac{9 - 3}{2} + 1$}
+        \end{minipage}%
+        \begin{minipage}{.3\textwidth}
+          \centering
+          \begin{tikzpicture}[scale=0.3]
+            % draw filter at position 0
+            \fill[electriclime] (0, 9) rectangle (3, 6);
+            \fill[glaucous] (3, 6) rectangle (6, 3);
+            \fill[electriclime] (6, 3) rectangle (9, 0);
+            % draw a 9X9 grid
+            \draw[step=1cm,black,very thin] (0,0) grid (9,9);
+          \end{tikzpicture}
+          \caption{\\Stride~=~$3$\\ $M = 3 = \frac{9 - 3}{3} + 1$}
+        \end{minipage}%
+      \end{figure}
+  
+\end{problem}
+\end{document}
