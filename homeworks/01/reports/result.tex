@@ -40,18 +40,28 @@
 \def \P { \mathbf{P}}
 \def \N { \mathbf{N}}
 
-\newpage
-\begin{problem}[1]
-  Report on the results of the models.
+% \newpage
+% \begin{problem}[1]
+%   Report on the results of the models.
 
   As we can see in table~\ref{tab:params}, the first neural network,
   having $1024$ hidden units, learns about $4$ times more parameters
   than the second one which has $256$ hidden units.
   This is expected since the number of hidden units in the first neural
   network is exactly four times as many as the number of hidden units in the second.
+  However, table!\ref{tab:results} shows that both models have comparable performance
+  on the dataset, with a validation error of $0.505$ for the model with $1024$ hidden units,
+  compared to $0.515$ for the model with $256$ hidden units.
+  In this regard, it may seem that the hidden unit trade-off might be worth it;
+  learning fewer parameters yields almost identical error rates.
 
   \step
-  However, let's look at how that affects the 
+  However, when we look at the computed generalization bounds,
+  we notice that the $1024$-layer neural network has much larger VC bound,
+  L!$_{max}$ bound, and generalization bound by a factor of about $4$.
+  Therefore, the $256$-layer neural network is actually more robust,
+  suggesting that the $1024$-layer neural network might have learned
+  some spurious patterns in the data and is therefore more prone to overfitting.
 
   \step
     \begin{table}[h]
@@ -113,5 +123,5 @@
     \end{table}
 
 
-\end{problem}
+% \end{problem}
 \end{document}
