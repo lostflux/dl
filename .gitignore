@@ -452,3 +452,8 @@ TSWLatexianTemp*
 # MacOS Crap
 .DS_Store
 *.DS_Store
+
+
+# datasets
+dataset
+*.zip
