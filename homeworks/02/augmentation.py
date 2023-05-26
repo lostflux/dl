@@ -188,6 +188,8 @@ def train_classifier(model=model, train_loader=train_loader, epochs=50):
 
 	# epochs = 50
 
+	# I defined this in another place to control the number of epochs
+
 ##************************* Your code ends here***********************
 	steps = 0
 	print_every = 5
@@ -273,6 +275,8 @@ if __name__ == '__main__':
 		train_classifier(model=clone_model, train_loader=loader, epochs=10)
 		accuracy = test_accuracy(clone_model, test_loader)
 		performance[(k, 10)] = accuracy
+		# save model
+		torch.save(clone_model.state_dict(), f"models/augmenting/{k}_10.pth")
 		print(f"Accuracy for {k} and 10 epochs is {accuracy}")
 
 
@@ -280,12 +284,16 @@ if __name__ == '__main__':
 		train_classifier(model=clone_model, train_loader=loader, epochs=20)
 		accuracy = test_accuracy(clone_model, test_loader)
 		performance[(k, 30)] = accuracy
+		# save model
+		torch.save(clone_model.state_dict(), f"models/augmenting/{k}_30.pth")
 		print(f"Accuracy for {k} and 30 epochs is {accuracy}")
 
 		# train up to 50 epochs
 		train_classifier(model=clone_model, train_loader=loader, epochs=20)
 		accuracy = test_accuracy(clone_model, test_loader)
 		performance[(k, 10)] = accuracy
+		# save model
+		torch.save(clone_model.state_dict(), f"models/augmenting/{k}_50.pth")
 		print(f"Accuracy for {k} and 50 epochs is {accuracy}")
 		
 		with open("logs/augmentation.json", "w") as f:
