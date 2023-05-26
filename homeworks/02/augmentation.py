@@ -3,19 +3,19 @@
 
 
 ## Importing all libraries
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+# import numpy as np
+# import pandas as pd
+# import matplotlib.pyplot as plt
 from collections import OrderedDict
-import seaborn as sb
-import cv2
+# import seaborn as sb
+# import cv2
 import json
 import torch
 from torch import nn
 from torch import optim
-import torch.nn.functional as F
+# import torch.nn.functional as F
 from torchvision import datasets, transforms, models
-import sys
+# import sys
 import copy
 
 
@@ -37,7 +37,7 @@ test_dir = f"{data_dir}/flowers/test"
 
 with open(f'{data_dir}/flower_to_name.json', 'r') as f:
 	flower_to_name = json.load(f)
-	print(f"flower_to_name: {flower_to_name}")
+	# print(f"flower_to_name: {flower_to_name}")
 
 
 ##************************* Your code ends here***********************
@@ -60,6 +60,7 @@ training_transforms = transforms.Compose([
 
 Tech0 = transforms.Compose([
 	transforms.RandomCrop(size=224),
+	transforms.ToTensor(),
 	transforms.Normalize(
 		[0.485, 0.456, 0.406], 
 		[0.229, 0.224, 0.225]
@@ -69,6 +70,7 @@ Tech0 = transforms.Compose([
 Tech1 = transforms.Compose([
 	transforms.RandomCrop(size=224),
 	transforms.RandomHorizontalFlip(p=0.5),
+	transforms.ToTensor(),
 	transforms.Normalize(
 		[0.485, 0.456, 0.406], 
 		[0.229, 0.224, 0.225]
@@ -79,6 +81,7 @@ Tech2 = transforms.Compose([
 	transforms.RandomCrop(size=224),
 	transforms.RandomHorizontalFlip(p=0.5),
 	transforms.RandomRotation(degrees=30),
+	transforms.ToTensor(),
 	transforms.Normalize(
 		[0.485, 0.456, 0.406], 
 		[0.229, 0.224, 0.225]
@@ -90,10 +93,11 @@ Tech3 = transforms.Compose([
 	transforms.RandomHorizontalFlip(p=0.5),
 	transforms.RandomRotation(degrees=30),
 	transforms.ColorJitter(
-		brightness_min=0.5, brightness_max=1.2,
-		contrast_min=0.5,   contrast_max=1.2,
-		saturation_min=0.5, saturation_max=1.2
+		brightness=(0.5, 1.2),
+		contrast=(0.5, 1.2),
+		saturation=(0.5, 1.2)
 	),
+	transforms.ToTensor(),
 	transforms.Normalize(
 		[0.485, 0.456, 0.406], 
 		[0.229, 0.224, 0.225]
@@ -258,19 +262,36 @@ test_accuracy(model, test_loader)
 if __name__ == '__main__':
 
 	performance = {}
-	epochs=[10, 30, 50]
 	for k, v in train_datasets.items():
 		loader = torch.utils.data.DataLoader(v, batch_size=128, shuffle=True)
 
-		for epoch in epochs:
+		# created a copy of model to avoid current operations affecting
+		# future results.
+		clone_model = copy.deepcopy(model)
 
-			# created a copy of model to avoid current operations affecting
-			# future results.
-			clone_model = copy.deepcopy(model)
-			train_classifier(model=clone_model, train_loader=loader)
-			accuracy = test_accuracy(clone_model, test_loader)
-			performance[(k, epoch)] = accuracy
-			print(f"Accuracy for {k} and {epoch} epochs is {accuracy}")
+		# train up to 10 epochs 
+		train_classifier(model=clone_model, train_loader=loader, epochs=10)
+		accuracy = test_accuracy(clone_model, test_loader)
+		performance[(k, 10)] = accuracy
+		print(f"Accuracy for {k} and 10 epochs is {accuracy}")
+
+
+		# train up to 30 epochs
+		train_classifier(model=clone_model, train_loader=loader, epochs=20)
+		accuracy = test_accuracy(clone_model, test_loader)
+		performance[(k, 30)] = accuracy
+		print(f"Accuracy for {k} and 30 epochs is {accuracy}")
+
+		# train up to 50 epochs
+		train_classifier(model=clone_model, train_loader=loader, epochs=20)
+		accuracy = test_accuracy(clone_model, test_loader)
+		performance[(k, 10)] = accuracy
+		print(f"Accuracy for {k} and 50 epochs is {accuracy}")
+		
+		with open("logs/augmentation.json", "w") as f:
+			json.dump(performance, f)
+			f.close()
+			
 
 
 ##************************* Your code ends here***********************
