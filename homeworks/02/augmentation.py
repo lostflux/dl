@@ -16,6 +16,7 @@ from torch import optim
 import torch.nn.functional as F
 from torchvision import datasets, transforms, models
 import sys
+import copy
 
 
 ##Load Data from paths
@@ -99,6 +100,15 @@ Tech3 = transforms.Compose([
 	),
 ])
 
+train_transforms = {
+	"Tech0": Tech0,
+	"Tech1": Tech1,
+	"Tech2": Tech2,
+	"Tech3": Tech3,
+}
+
+train_datasets = { k: datasets.ImageFolder(train_dir, transform=v) for k, v in train_transforms.items() }
+
 ##************************* Your code ends here***********************
 
 
@@ -169,10 +179,10 @@ def validation(model, validateloader, criterion):
 criterion = nn.NLLLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-def train_classifier():
+def train_classifier(model=model, train_loader=train_loader, epochs=50):
 #************************* Write your code here *********************
 
-	epochs = 50
+	# epochs = 50
 
 ##************************* Your code ends here***********************
 	steps = 0
@@ -213,7 +223,7 @@ def train_classifier():
 		running_loss = 0
 		model.train()
 					
-train_classifier()    
+# train_classifier()    
 
 def test_accuracy(model, test_loader):
 
@@ -234,7 +244,9 @@ def test_accuracy(model, test_loader):
 			equality = (labels.data == probabilities.max(dim=1)[1])
 			accuracy += equality.type(torch.FloatTensor).mean()
 		
-		print("Test Accuracy: {}".format(accuracy/len(test_loader)))    
+		avg_accuracy = accuracy/len(test_loader)
+		print(f"Test Accuracy: {avg_accuracy}")
+		return avg_accuracy
 		
 		
 test_accuracy(model, test_loader)
@@ -243,6 +255,22 @@ test_accuracy(model, test_loader)
 ## Save your test accuracies changing epochs and augmentations Tech0/1/2/3
 ## Plot the line graph
 #************************* Write your code here *********************
+if __name__ == '__main__':
+
+	performance = {}
+	epochs=[10, 30, 50]
+	for k, v in train_datasets.items():
+		loader = torch.utils.data.DataLoader(v, batch_size=128, shuffle=True)
+
+		for epoch in epochs:
+
+			# created a copy of model to avoid current operations affecting
+			# future results.
+			clone_model = copy.deepcopy(model)
+			train_classifier(model=clone_model, train_loader=loader)
+			accuracy = test_accuracy(clone_model, test_loader)
+			performance[(k, epoch)] = accuracy
+			print(f"Accuracy for {k} and {epoch} epochs is {accuracy}")
 
 
 ##************************* Your code ends here***********************
