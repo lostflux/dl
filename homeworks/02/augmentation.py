@@ -49,23 +49,77 @@ with open(f'{data_dir}/flower_to_name.json', 'r') as f:
 
 training_transforms = transforms.Compose([
 	transforms.RandomCrop(size=32, padding=4),
-	transforms.RandomHorizontalFlip(p=0.5)
+	transforms.RandomHorizontalFlip(p=0.5),
+	transforms.ToTensor(),
+	transforms.Normalize(
+		[0.485, 0.456, 0.406], 
+		[0.229, 0.224, 0.225]
+	)
+])
+
+Tech0 = transforms.Compose([
+	transforms.RandomCrop(size=224),
+	transforms.Normalize(
+		[0.485, 0.456, 0.406], 
+		[0.229, 0.224, 0.225]
+	),
+])
+
+Tech1 = transforms.Compose([
+	transforms.RandomCrop(size=224),
+	transforms.RandomHorizontalFlip(p=0.5),
+	transforms.Normalize(
+		[0.485, 0.456, 0.406], 
+		[0.229, 0.224, 0.225]
+	),
+])
+
+Tech2 = transforms.Compose([
+	transforms.RandomCrop(size=224),
+	transforms.RandomHorizontalFlip(p=0.5),
+	transforms.RandomRotation(degrees=30),
+	transforms.Normalize(
+		[0.485, 0.456, 0.406], 
+		[0.229, 0.224, 0.225]
+	),
+])
+
+Tech3 = transforms.Compose([
+	transforms.RandomCrop(size=224),
+	transforms.RandomHorizontalFlip(p=0.5),
+	transforms.RandomRotation(degrees=30),
+	transforms.ColorJitter(
+		brightness_min=0.5, brightness_max=1.2,
+		contrast_min=0.5,   contrast_max=1.2,
+		saturation_min=0.5, saturation_max=1.2
+	),
+	transforms.Normalize(
+		[0.485, 0.456, 0.406], 
+		[0.229, 0.224, 0.225]
+	),
 ])
 
 ##************************* Your code ends here***********************
 
 
-validation_transforms = transforms.Compose([transforms.Resize(256),
-                                            transforms.CenterCrop(224),
-                                            transforms.ToTensor(),
-                                            transforms.Normalize([0.485, 0.456, 0.406], 
-                                                                 [0.229, 0.224, 0.225])])
+validation_transforms = transforms.Compose([
+	transforms.Resize(256),
+	transforms.CenterCrop(224),
+	transforms.ToTensor(),
+	transforms.Normalize(
+		[0.485, 0.456, 0.406], 
+		[0.229, 0.224, 0.225]
+	)
+])
 
-testing_transforms = transforms.Compose([transforms.Resize(256),
-                                         transforms.CenterCrop(224),
-                                         transforms.ToTensor(),
-                                         transforms.Normalize([0.485, 0.456, 0.406], 
-                                                              [0.229, 0.224, 0.225])])
+testing_transforms = transforms.Compose([
+	transforms.Resize(256),
+	transforms.CenterCrop(224),
+	transforms.ToTensor(),
+	transforms.Normalize(
+		[0.485, 0.456, 0.406], 
+		[0.229, 0.224, 0.225])
+])
 
 #Load the datasets with ImageFolder
 training_dataset = datasets.ImageFolder(train_dir, transform=training_transforms)
@@ -73,27 +127,27 @@ validation_dataset = datasets.ImageFolder(valid_dir, transform=validation_transf
 testing_dataset = datasets.ImageFolder(test_dir, transform=testing_transforms)
 
 #Using the image datasets and the trainforms, define the dataloaders
-train_loader = torch.utils.data.DataLoader(training_dataset, batch_size=128, shuffle=True, workers=4)
+train_loader = torch.utils.data.DataLoader(training_dataset, batch_size=128, shuffle=True)
 validate_loader = torch.utils.data.DataLoader(validation_dataset, batch_size=32)
 test_loader = torch.utils.data.DataLoader(testing_dataset, batch_size=100)
 
 model = models.resnet18(pretrained=True)
 # Freeze pretrained model parameters to avoid backpropogating through them
 for parameter in model.parameters():
-    parameter.requires_grad = True
+	parameter.requires_grad = True
 
 
 # Build custom classifier
 classifier = nn.Sequential(OrderedDict([('fc1', nn.Linear(512,64)),
-                                        ('relu', nn.ReLU()),
-                                        ('drop', nn.Dropout(p=0.5)),
-                                        ('fc2', nn.Linear(64, 20)),
-                                        ('output', nn.LogSoftmax(dim=1))]))
+										('relu', nn.ReLU()),
+										('drop', nn.Dropout(p=0.5)),
+										('fc2', nn.Linear(64, 20)),
+										('output', nn.LogSoftmax(dim=1))]))
 model.fc = classifier
 
 # Function for the validation pass
 def validation(model, validateloader, criterion):
-    
+	
 	val_loss = 0
 	accuracy = 0
 	
@@ -118,7 +172,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 def train_classifier():
 #************************* Write your code here *********************
 
-	epochs = 0
+	epochs = 50
 
 ##************************* Your code ends here***********************
 	steps = 0
@@ -158,7 +212,7 @@ def train_classifier():
 
 		running_loss = 0
 		model.train()
-                    
+					
 train_classifier()    
 
 def test_accuracy(model, test_loader):
@@ -181,11 +235,11 @@ def test_accuracy(model, test_loader):
 			accuracy += equality.type(torch.FloatTensor).mean()
 		
 		print("Test Accuracy: {}".format(accuracy/len(test_loader)))    
-        
-        
+		
+		
 test_accuracy(model, test_loader)
 
-##Save your models trained for 50 epochs
+## Save your models trained for 50 epochs
 ## Save your test accuracies changing epochs and augmentations Tech0/1/2/3
 ## Plot the line graph
 #************************* Write your code here *********************
