@@ -23,7 +23,7 @@ import copy
 ##Update data_dir path to your flowers directory location
 #************************* Write your code here *********************
 
-data_dir = "dataset"
+data_dir = "data/flowers-dataset"
 
 
 ##************************* Your code ends here***********************
