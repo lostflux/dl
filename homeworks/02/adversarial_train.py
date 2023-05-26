@@ -9,11 +9,52 @@ import torch.backends.cudnn as cudnn
 #import resnet
 import torchvision
 import torchvision.transforms as transforms
+import copy
 
 import os
 import numpy as np
 
+# import json lib
+import json
+
 ##Defining basic blocks for model
+
+log_file = open('logs/adversarial_training.log', 'w')
+log_file.write("START")
+
+log_dict = {}
+
+def log_progress(benign_correct, adv_correct, benign_loss, adv_loss, total):
+	benign_accuracy = 100. * benign_correct / total
+	adv_accuracy = 100. * adv_correct / total
+
+	print(f"Total Benign Accuracy: {benign_accuracy}\n")
+	print(f"Total Adversarial Accuracy: {adv_accuracy}\n")
+	print(f"Total Benign Test Loss: {benign_loss}\n")
+	print(f"Total Adversarial Test Loss: {adv_loss}\n")
+
+	log_file.write(f"\n\n\n{epoch = }\n")
+	log_file.write(f"Total Benign Accuracy: {benign_accuracy}\n")
+	log_file.write(f"Total Adversarial Accuracy: {adv_accuracy}\n")
+	log_file.write(f"Total Benign Test Loss: {benign_loss}\n")
+	log_file.write(f"Total Adversarial Test Loss: {adv_loss}\n")
+
+	
+	log_dict[epoch] = {
+		"benign_accuracy": benign_accuracy,
+		"adv_accuracy": adv_accuracy,
+		"benign_loss": benign_loss,
+		"adv_loss": adv_loss
+	}
+
+	out_dict = open('logs/adversarial_training_dict.json', 'w')
+	out_dict.write(
+		json.dumps(log_dict)
+	)
+
+	out_dict.close()
+
+
 
 class BasicBlock(nn.Module):
 	expansion = 1
@@ -89,6 +130,7 @@ file_name = 'adversarial_training'
 mixup_alpha = 1.0
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(f"{device = }")
 
 ##Training and Test set Transformations
 #************************* Write your code here *********************
@@ -289,10 +331,12 @@ def test(epoch):
 				print('Current adversarial test accuracy:', str(predicted.eq(targets).sum().item() / targets.size(0)))
 				print('Current adversarial test loss:', loss.item())
 
-	print('\nTotal benign test accuarcy:', 100. * benign_correct / total)
-	print('Total adversarial test Accuarcy:', 100. * adv_correct / total)
-	print('Total benign test loss:', benign_loss)
-	print('Total adversarial test loss:', adv_loss)
+	# print('\nTotal benign test accuarcy:', 100. * benign_correct / total)
+	# print('Total adversarial test Accuarcy:', 100. * adv_correct / total)
+	# print('Total benign test loss:', benign_loss)
+	# print('Total adversarial test loss:', adv_loss)
+
+	log_progress(benign_correct, adv_correct, benign_loss, adv_loss, total)
 
 	state = {
 		'net': net.state_dict()
@@ -302,12 +346,12 @@ def test(epoch):
 
 #************************* Write your code here *********************
 	# save the model after each epoch
-	torch.save(state, f'mixup_adv_train_{epoch}.pth')
+	torch.save(state, f'models/mixup_adv_train_{epoch}.pth')
+	print('Model Saved!')
 
 
 
 ##************************* Your code ends here***********************
-	print('Model Saved!')
 
 def adjust_learning_rate(optimizer, epoch):
 	lr = learning_rate
