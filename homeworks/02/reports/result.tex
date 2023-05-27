@@ -42,21 +42,21 @@
 
 \section{Adversarial Training}
 
-The adversarial training part was quite interesting.
-I initially tried training on a MacBook Pro but it was taking too long (around $5$ minutes per epoch).
-I then shifted to my Windows laptop which has a discrete graphics card, and the training time went
-down to less than half a minute per epoch. The entire training still took around $90$ minutes,
-but it was really interesting to see the model predictions improve.
+Adversarial training took about $2$ hours on my laptop (which has a quite capable GPU).
+The general trend was improvement in both the benign and adversarial test accuracies
+the more the model was trained. However, the rate of improvement slowed down and became almost
+zero, suggesting that the methods used would reach a limit and perhaps
+other methods would be needed to improve the model further.
 
-
-\begin{figure}[h]
+\step
+\begin{figure}[h!]
   \centering
   \begin{tikzpicture}
     \begin{axis}[
-      xlabel={Number of Epochs},
-      ylabel={Accuracy},
+      xlabel={Number of Epochs Trained},
+      ylabel={Accuracy $(\%)$},
       xmin=0, xmax=26,
-      ymin=0, ymax=100,
+      ymin=0, ymax=110,
       xtick={0,5,10,15,20,25},
       ytick={0,20,40,60,80,100},
       legend pos=north west,
@@ -81,13 +81,13 @@ but it was really interesting to see the model predictions improve.
       \addlegendentry{Adversarial Test Accuracy}
     \end{axis}
   \end{tikzpicture}
-  \caption{Adversarial Training Results (Graph).}~\label{fig:results}
+  \caption{Adversarial Training: Model Performance vs. Epochs Trained}~\label{fig:results}
 \end{figure}
 
 \newpage
 
 
-\begin{table}[h]
+\begin{table}[h!]
     \centering
     \begin{tabular}{| r | r | r |}
       \bottomrule
@@ -120,7 +120,7 @@ but it was really interesting to see the model predictions improve.
       $25$                        & $81.94$                 & $40.62$ \\
     \toprule
   \end{tabular}
-  \caption{Adversarial Training Results.}~\label{tab:results}
+  \caption{Adversarial Training: Model Performance vs. Epochs Trained}~\label{tab:results}
 \end{table}
 
 
@@ -130,6 +130,22 @@ but it was really interesting to see the model predictions improve.
 In the data augmentation part, with some particular methods,
 the model seemed to perform worse the more I trained it.
 
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|l|r|r|r|}
+    \hline
+    Mode & 10 Epochs & 30 Epochs & 50 Epochs \\
+    \hline
+    Tech0 & 0.029999999329447746 & 0.4140909016132355 & 0.04500000178813934 \\
+    \hline
+    Tech1 & 0.4140909016132355 & 0.15590909123420715 & 0.36318182945251465 \\
+    \hline
+    Tech2 & 0.03999999910593033 & 0.054999999701976776 & 0.4140909016132355 \\
+    \hline
+    Tech3 & 0.09045454859733582 & 0.1359090954065323 & 0.04500000178813934 \\
+    \hline
+  \end{tabular}
+\end{table}
 
 % \end{problem}
 \end{document}
