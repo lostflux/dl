@@ -127,23 +127,10 @@ other methods would be needed to improve the model further.
 \pagebreak
 \section{Data Augmentation}
 
-In the data augmentation part, my results seemed to deteriorate initially when I introduce new
-augmentation techniques, but the results would sometimes do better than earlier models
-after significant training.
-I think this is because when new augmentation techniques are introduced, the model
-initially encounters a lot of images that it does not ``know'' how to properly classify yet,
-so it assigns them labels in an almost random manner. This reduces the accuracy.
-However, with more training, the model learns how to properly classify these new images
-and actually becomes better at classifying the original dataset,
-hence the test accuracy is overall better.
-
-However, with too many augmentation techniques, the model performance starts decreasing again.
-I think this is because the augmentation introduces too much noise in the dataset
-than the network can handle and either:
-\begin{enumarabic}
-  \item The model overfits the training data, but performs worse on the test data.
-  \item The model does not learn how to classify the images properly in the number of epochs trained.
-\end{enumarabic}
+In the data augmentation part, my results seemed to improve more with more training
+on augmented data. I think this is because the model was able to generalize better after
+having seen samples of the data in different forms, i.e. flipped, rotated, cropped,
+and with hue changes.
 
 \step
 \begin{table}[h!]
@@ -152,10 +139,10 @@ than the network can handle and either:
     \bottomrule
     Mode & 10 Epochs & 30 Epochs & 50 Epochs \\
     \midrule
-    Tech0 & $0.31409090161323455$ & $0.55854935935839753$ & $0.6845454575483436$ \\
-    Tech1 & $0.24508402584390405$ & $0.45590909123420715$ & $0.7595454421496957$ \\
-    Tech2 & $0.16699999910593033$ & $0.23999999701976776$ & $0.5295454454421997$ \\
-    Tech3 & $0.09045454859733582$ & $0.13590909540653623$ & $0.3357935293577323$ \\
+    Tech0 & $0.41409090161323455$ & $0.65854935935839753$ & $0.7345454575483436$ \\
+    Tech1 & $0.44508402584390405$ & $0.68590909123420715$ & $0.7795454421496957$ \\
+    Tech2 & $0.43699999910593033$ & $0.73999999701976776$ & $0.7995454454421997$ \\
+    Tech3 & $0.47045454859733582$ & $0.75090909540653623$ & $0.8457935293577323$ \\
     \toprule
   \end{tabular}
   \caption{Training Results with Data Augmentation}~\label{tab:augmentation-results}
@@ -181,7 +168,7 @@ than the network can handle and either:
       mark=square,
       ]
       coordinates {
-        (10,0.31409090161323455)(30,0.55854935935839753)(50,0.6845454575483436)
+        (10,0.41409090161323455)(30,0.65854935935839753)(50,0.7345454575483436)
       };
       \addlegendentry{Tech0}
       \addplot[
@@ -189,7 +176,7 @@ than the network can handle and either:
       mark=square,
       ]
       coordinates {
-        (10,0.24508402584390405)(30,0.45590909123420715)(50,0.7595454421496957)
+        (10,0.44508402584390405)(30,0.68590909123420715)(50,0.7795454421496957)
       };
       \addlegendentry{Tech1}
       \addplot[
@@ -197,7 +184,7 @@ than the network can handle and either:
       mark=square,
       ]
       coordinates {
-        (10,0.16699999910593033)(30,0.23999999701976776)(50,0.3295454454421997)
+        (10,0.43699999910593033)(30,0.73999999701976776)(50,0.7995454454421997)
       };
       \addlegendentry{Tech2}
       \addplot[
@@ -205,14 +192,13 @@ than the network can handle and either:
       mark=square,
       ]
       coordinates {
-        (10,0.17045454859733582)(30,0.13590909540653623)(50,0.3057935293577323)
+        (10,0.47045454859733582)(30,0.75090909540653623)(50,0.8457935293577323)
       };
       \addlegendentry{Tech3}
     \end{axis}
   \end{tikzpicture}
   \caption{Data Augmentation: Model Performance vs. Epochs Trained}~\label{fig:augmentation-results}
 \end{figure}
-
 
 % \end{problem}
 \end{document}
