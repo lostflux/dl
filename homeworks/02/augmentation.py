@@ -15,7 +15,7 @@ from torch import nn
 from torch import optim
 # import torch.nn.functional as F
 from torchvision import datasets, transforms, models
-# import sys
+import sys
 import copy
 
 
@@ -231,7 +231,7 @@ def train_classifier(model=model, train_loader=train_loader, epochs=50):
 					
 # train_classifier()    
 
-def test_accuracy(model, test_loader):
+def test_accuracy(model, test_loader) -> float:
 
 	# Do validation on the test set
 	model.eval()
@@ -252,10 +252,12 @@ def test_accuracy(model, test_loader):
 		
 		avg_accuracy = accuracy/len(test_loader)
 		print(f"Test Accuracy: {avg_accuracy}")
-		return avg_accuracy
+
+		# return as numpy float, not GPU float wrapped in a tensor
+		return avg_accuracy.cpu().numpy()[()]
 		
 		
-test_accuracy(model, test_loader)
+# test_accuracy(model, test_loader)
 
 ## Save your models trained for 50 epochs
 ## Save your test accuracies changing epochs and augmentations Tech0/1/2/3
@@ -263,42 +265,51 @@ test_accuracy(model, test_loader)
 #************************* Write your code here *********************
 if __name__ == '__main__':
 
-	performance = {}
-	for k, v in train_datasets.items():
-		loader = torch.utils.data.DataLoader(v, batch_size=128, shuffle=True)
+	# mode
+	mode = f"Tech{sys.argv[1]}"
 
-		# created a copy of model to avoid current operations affecting
-		# future results.
-		clone_model = copy.deepcopy(model)
+  # load performance dictionary
+	performance = json.load(open("./logs/augmentation.json", "r"))
+	# for k, v in train_datasets.items():
+	loader = torch.utils.data.DataLoader(train_datasets[mode], batch_size=128, shuffle=True)
 
-		# train up to 10 epochs 
-		train_classifier(model=clone_model, train_loader=loader, epochs=10)
-		accuracy = test_accuracy(clone_model, test_loader)
-		performance[(k, 10)] = accuracy
-		# save model
-		torch.save(clone_model.state_dict(), f"models/augmenting/{k}_10.pth")
-		print(f"Accuracy for {k} and 10 epochs is {accuracy}")
+	model_alias = model
+
+	# train up to 10 epochs 
+	train_classifier(model=model_alias, train_loader=loader, epochs=10)
+	accuracy = test_accuracy(model_alias, test_loader)
+	performance_record = performance.get(mode, [])
+	performance_record.append([10, f"{accuracy}"])
+	performance[mode] = performance_record
+	# save model
+	torch.save(model_alias.state_dict(), f"models/augmenting/{mode}_10.pth")
+	print(f"Accuracy for {mode} and 10 epochs is {accuracy}")
+	print(f"{performance = }")
 
 
-		# train up to 30 epochs
-		train_classifier(model=clone_model, train_loader=loader, epochs=20)
-		accuracy = test_accuracy(clone_model, test_loader)
-		performance[(k, 30)] = accuracy
-		# save model
-		torch.save(clone_model.state_dict(), f"models/augmenting/{k}_30.pth")
-		print(f"Accuracy for {k} and 30 epochs is {accuracy}")
+	# train up to 30 epochs
+	train_classifier(model=model_alias, train_loader=loader, epochs=20)
+	accuracy = test_accuracy(model_alias, test_loader)
+	performance_record = performance.get(mode, [])
+	performance_record.append([30, f"{accuracy}"])
+	performance[mode] = performance_record
+	print(f"Accuracy for {mode} and 30 epochs is {accuracy}")
+	print(f"{performance = }")
 
-		# train up to 50 epochs
-		train_classifier(model=clone_model, train_loader=loader, epochs=20)
-		accuracy = test_accuracy(clone_model, test_loader)
-		performance[(k, 10)] = accuracy
-		# save model
-		torch.save(clone_model.state_dict(), f"models/augmenting/{k}_50.pth")
-		print(f"Accuracy for {k} and 50 epochs is {accuracy}")
-		
-		with open("logs/augmentation.json", "w") as f:
-			json.dump(performance, f)
-			f.close()
+	# train up to 50 epochs
+	train_classifier(model=model_alias, train_loader=loader, epochs=20)
+	accuracy = test_accuracy(model_alias, test_loader)
+	performance_record = performance.get(mode, [])
+	performance_record.append([50, f"{accuracy}"])
+	performance[mode] = performance_record
+	# save model
+	torch.save(model_alias.state_dict(), f"models/augmenting/{mode}_50.pth")
+	print(f"Accuracy for {mode} and 50 epochs is {accuracy}")
+	print(f"{performance = }")
+	
+	with open(f"logs/augmentation.json", "w") as f:
+		json.dump(performance, f)
+		f.close()
 			
 
 
