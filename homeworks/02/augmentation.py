@@ -59,7 +59,7 @@ training_transforms = transforms.Compose([
 ])
 
 Tech0 = transforms.Compose([
-	transforms.RandomCrop(size=224),
+	transforms.RandomResizedCrop(size=224),
 	transforms.ToTensor(),
 	transforms.Normalize(
 		[0.485, 0.456, 0.406], 
@@ -68,7 +68,7 @@ Tech0 = transforms.Compose([
 ])
 
 Tech1 = transforms.Compose([
-	transforms.RandomCrop(size=224),
+	transforms.RandomResizedCrop(size=224),
 	transforms.RandomHorizontalFlip(p=0.5),
 	transforms.ToTensor(),
 	transforms.Normalize(
@@ -78,7 +78,7 @@ Tech1 = transforms.Compose([
 ])
 
 Tech2 = transforms.Compose([
-	transforms.RandomCrop(size=224),
+	transforms.RandomResizedCrop(size=224),
 	transforms.RandomHorizontalFlip(p=0.5),
 	transforms.RandomRotation(degrees=30),
 	transforms.ToTensor(),
@@ -89,7 +89,7 @@ Tech2 = transforms.Compose([
 ])
 
 Tech3 = transforms.Compose([
-	transforms.RandomCrop(size=224),
+	transforms.RandomResizedCrop(size=224),
 	transforms.RandomHorizontalFlip(p=0.5),
 	transforms.RandomRotation(degrees=30),
 	transforms.ColorJitter(
