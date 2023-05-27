@@ -127,25 +127,92 @@ other methods would be needed to improve the model further.
 \pagebreak
 \section{Data Augmentation}
 
-In the data augmentation part, with some particular methods,
-the model seemed to perform worse the more I trained it.
+In the data augmentation part, my results seemed to deteriorate initially when I introduce new
+augmentation techniques, but the results would sometimes do better than earlier models
+after significant training.
+I think this is because when new augmentation techniques are introduced, the model
+initially encounters a lot of images that it does not ``know'' how to properly classify yet,
+so it assigns them labels in an almost random manner. This reduces the accuracy.
+However, with more training, the model learns how to properly classify these new images
+and actually becomes better at classifying the original dataset,
+hence the test accuracy is overall better.
 
+However, with too many augmentation techniques, the model performance starts decreasing again.
+I think this is because the augmentation introduces too much noise in the dataset
+than the network can handle and either:
+\begin{enumarabic}
+  \item The model overfits the training data, but performs worse on the test data.
+  \item The model does not learn how to classify the images properly in the number of epochs trained.
+\end{enumarabic}
+
+\step
 \begin{table}[h!]
   \centering
   \begin{tabular}{|l|r|r|r|}
-    \hline
+    \bottomrule
     Mode & 10 Epochs & 30 Epochs & 50 Epochs \\
-    \hline
-    Tech0 & 0.029999999329447746 & 0.4140909016132355 & 0.04500000178813934 \\
-    \hline
-    Tech1 & 0.4140909016132355 & 0.15590909123420715 & 0.36318182945251465 \\
-    \hline
-    Tech2 & 0.03999999910593033 & 0.054999999701976776 & 0.4140909016132355 \\
-    \hline
-    Tech3 & 0.09045454859733582 & 0.1359090954065323 & 0.04500000178813934 \\
-    \hline
+    \midrule
+    Tech0 & $0.31409090161323455$ & $0.55854935935839753$ & $0.6845454575483436$ \\
+    Tech1 & $0.24508402584390405$ & $0.45590909123420715$ & $0.7595454421496957$ \\
+    Tech2 & $0.16699999910593033$ & $0.23999999701976776$ & $0.5295454454421997$ \\
+    Tech3 & $0.09045454859733582$ & $0.13590909540653623$ & $0.3357935293577323$ \\
+    \toprule
   \end{tabular}
+  \caption{Training Results with Data Augmentation}~\label{tab:augmentation-results}
 \end{table}
+
+% Plot
+\begin{figure}[h!]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      xlabel={Epochs Trained},
+      ylabel={Test Accuracy},
+      xmin=0, xmax=60,
+      ymin=0, ymax=1,
+      xtick={0,10,20,30,40,50},
+      ytick={0,0.2,0.4,0.6,0.8,1.0},
+      legend pos=north west,
+      ymajorgrids=true,
+      grid style=dashed,
+      ]
+      \addplot[
+      color=blue,
+      mark=square,
+      ]
+      coordinates {
+        (10,0.31409090161323455)(30,0.55854935935839753)(50,0.6845454575483436)
+      };
+      \addlegendentry{Tech0}
+      \addplot[
+      color=red,
+      mark=square,
+      ]
+      coordinates {
+        (10,0.24508402584390405)(30,0.45590909123420715)(50,0.7595454421496957)
+      };
+      \addlegendentry{Tech1}
+      \addplot[
+      color=green,
+      mark=square,
+      ]
+      coordinates {
+        (10,0.16699999910593033)(30,0.23999999701976776)(50,0.3295454454421997)
+      };
+      \addlegendentry{Tech2}
+      \addplot[
+      color=orange,
+      mark=square,
+      ]
+      coordinates {
+        (10,0.17045454859733582)(30,0.13590909540653623)(50,0.3057935293577323)
+      };
+      \addlegendentry{Tech3}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Data Augmentation: Model Performance vs. Epochs Trained}~\label{fig:augmentation-results}
+\end{figure}
+
 
 % \end{problem}
 \end{document}
